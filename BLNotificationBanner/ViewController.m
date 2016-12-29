@@ -9,7 +9,9 @@
 #import "ViewController.h"
 #import "BLNotificationBanner.h"
 
-@interface ViewController ()
+@interface ViewController (){
+    NSTimer *timer;
+}
 @property (strong, nonatomic) UIView *notificationView;
 @property (strong, nonatomic) UILabel *label;
 @end
@@ -18,13 +20,15 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
-    self.view.userInteractionEnabled = YES;
-    
 }
 -(void)viewDidAppear:(BOOL)animated{
+    [super viewDidAppear:animated];
+    timer = [NSTimer scheduledTimerWithTimeInterval:5.0 target:self selector:@selector(post) userInfo:nil repeats:YES];
+    
+}
+-(void)post{
     BLNotificationBanner *banner = [BLNotificationBanner defaultBannerWithNavbarHeight:self.navigationController.navigationBar.frame.size.height];
-    banner.message = @"Cannot Refresh. No Internet Connection";
+    banner.message = @"Hello World";
     [self.view addSubview:banner];
     [banner show];
 }

@@ -516,6 +516,7 @@
 				A6F356AF1E12240800ABA458 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		A6F356B01E12240800ABA458 /* Build configuration list for PBXNativeTarget "BLNotificationBannerTests" */ = {
 			isa = XCConfigurationList;
@@ -524,6 +525,7 @@
 				A6F356B21E12240800ABA458 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		A6F356B31E12240800ABA458 /* Build configuration list for PBXNativeTarget "BLNotificationBannerUITests" */ = {
 			isa = XCConfigurationList;
@@ -532,6 +534,7 @@
 				A6F356B51E12240800ABA458 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

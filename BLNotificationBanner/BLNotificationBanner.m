@@ -8,9 +8,10 @@
 //
 
 #import "BLNotificationBanner.h"
-
+#define STATUS_BAR_HEIGHT 22.0
 @interface BLNotificationBanner (){
     NSTimer *timer;
+    BOOL includesStatusBar;
 }
 @property (strong, nonatomic) UILabel *label;
 @end
@@ -67,19 +68,41 @@
         label.text = self.message;
         label.textAlignment = NSTextAlignmentCenter;
         [label sizeToFit];
-        label.frame = CGRectMake(label.frame.origin.x, label.frame.origin.y, self.superview.frame.size.width, label.frame.size.height);
-        CGFloat height = self.navbarHeight+label.frame.size.height+self.verticalPadding*2;
+        label.translatesAutoresizingMaskIntoConstraints = NO;
+        
+        CGFloat statusBarHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
+        CGFloat height = self.navbarHeight+label.frame.size.height+self.verticalPadding*2-(22-statusBarHeight);
+            
+        //label.frame = CGRectMake(label.frame.origin.x, label.frame.origin.y, self.superview.frame.size.width, label.frame.size.height);
+        
         self.frame = CGRectMake(0, 0, self.superview.frame.size.width, height);
         [self addSubview:label];
-        label.center = CGPointMake(self.superview.center.x, self.frame.size.height-label.frame.size.height/2-_verticalPadding);
+        //label.center = CGPointMake(self.superview.center.x, self.frame.size.height-label.frame.size.height/2-_verticalPadding);
+        int vPad = (int)_verticalPadding;
+        NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:label attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:label.frame.size.height];
+        
+        NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:label attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeBottom multiplier:1 constant:-vPad];
+        
+        NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:label attribute:NSLayoutAttributeLeftMargin relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeftMargin multiplier:1 constant:0];
+        
+        NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:label attribute:NSLayoutAttributeRightMargin relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeRightMargin multiplier:1 constant:0];
+        
+        [self addConstraint:bottomConstraint];
+        [self addConstraint:leftConstraint];
+        [self addConstraint:rightConstraint];
+        [label addConstraint:heightConstraint];
+        
         self.center = CGPointMake(self.superview.center.x, -self.frame.size.height/2);
     }
+}
+-(void)didChangeOrientation{
+    self.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, self.superview.frame.size.width, self.frame.size.height);
 }
 //User Methods
 -(void)show{
     if (_showing)
         return;
-    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didChangeOrientation) name:UIDeviceOrientationDidChangeNotification object:nil];
     _showing = YES;
     [UIView animateWithDuration:self.animationTime delay:0 options:self.animationOptions animations:^{
         self.alpha = 1;
@@ -91,7 +114,7 @@
 -(void)dissapear{
     if (!_showing)
         return;
-    
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIDeviceOrientationDidChangeNotification object:nil];
     _showing = NO;
     if (timer){
         [timer invalidate];
