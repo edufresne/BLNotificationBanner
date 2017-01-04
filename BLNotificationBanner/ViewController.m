@@ -23,14 +23,14 @@
 }
 -(void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:animated];
-    timer = [NSTimer scheduledTimerWithTimeInterval:5.0 target:self selector:@selector(post) userInfo:nil repeats:YES];
-    
+    [self post];
 }
 -(void)post{
     BLNotificationBanner *banner = [BLNotificationBanner defaultBannerWithNavbarHeight:self.navigationController.navigationBar.frame.size.height];
     banner.message = @"Hello World";
+    
     [self.view addSubview:banner];
-    [banner show];
+    [banner showWithDelay:5.0];
 }
 
 

@@ -8,9 +8,10 @@
 //
 
 #import "BLNotificationBanner.h"
-#define STATUS_BAR_HEIGHT 22.0
+
 @interface BLNotificationBanner (){
     NSTimer *timer;
+    NSTimer *delayTimer;
     BOOL includesStatusBar;
 }
 @property (strong, nonatomic) UILabel *label;
@@ -29,6 +30,7 @@
         _showing = NO;
         _message = message;
         _navbarHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
+        _mustDissapearManually = NO;
         self.backgroundColor = [UIColor redColor];
         self.textColor = [UIColor whiteColor];
         self.font = [UIFont fontWithName:@"Helvetica" size:14];
@@ -45,6 +47,7 @@
         _showing = NO;
         _message = message;
         _navbarHeight = navbarHeight;
+        _mustDissapearManually = NO;
         self.backgroundColor = [UIColor redColor];
         self.textColor = [UIColor whiteColor];
         self.font = [UIFont fontWithName:@"Helvetica" size:14];
@@ -108,8 +111,13 @@
         self.alpha = 1;
         self.center = CGPointMake(self.center.x, (self.frame.size.height/2)+(self.verticalPadding*2)+label.frame.size.height);
     } completion:^(BOOL finished) {
-        timer = [NSTimer scheduledTimerWithTimeInterval:self.messageTime target:self selector:@selector(dissapear) userInfo:nil repeats:NO];
+        if (!self.mustDissapearManually){
+            timer = [NSTimer scheduledTimerWithTimeInterval:self.messageTime target:self selector:@selector(dissapear) userInfo:nil repeats:NO];
+        }
     }];
+}
+-(void)showWithDelay:(NSTimeInterval)delay{
+    delayTimer = [NSTimer scheduledTimerWithTimeInterval:delay target:self selector:@selector(show) userInfo:nil repeats:NO];
 }
 -(void)dissapear{
     if (!_showing)
